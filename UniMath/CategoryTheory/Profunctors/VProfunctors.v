@@ -34,6 +34,8 @@ Require Import UniMath.CategoryTheory.PrecategoryBinProduct.
 Require Import UniMath.CategoryTheory.opp_precat.
 Require Import UniMath.CategoryTheory.categories.HSET.Univalence.
 
+Local Open Scope cat.
+
 (** *** V-valued profunctors. *)
 Section VProfunctors.
   Context (V : precategory).
