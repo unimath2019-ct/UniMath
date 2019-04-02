@@ -238,10 +238,57 @@ Section VProfunctors.
     Coercion end_wedge : End >-> wedge.
 
     (** *** Cowedges *)
+    Definition is_cowedge (w : ob V) (pi : ∏ a : ob C, F (a ⊗ a) --> w) : UU :=
+      ∏ (a b : C) (f : a --> b) , lmap F f · pi a = rmap F f · pi b.
+
+    Lemma isaprop_is_cowedge (hs : has_homsets V) (w : ob V) (pi : ∏ a : ob C, F (a ⊗ a) --> w)
+      : isaprop (is_cowedge w pi).
+    Proof.
+      do 3 (apply impred; intro).
+      apply hs.
+    Qed.
+
+    Definition cowedge (w : ob V) : UU :=
+      ∑ pi : (∏ a : ob C, F (a ⊗ a) --> w), is_cowedge w pi.
+
+    Definition make_cowedge (w : ob V) (pi : (∏ a : ob C, F (a ⊗ a) --> (w : ob V))) :
+      (∏ (a b : ob C) (f : a --> b), lmap F f · pi a = rmap F f · pi b) -> cowedge w.
+    Proof.
+      intro.
+      use tpair.
+      - assumption.
+      - assumption.
+    Qed.
+
+    Definition cowedge_pr (w : ob V) (W : cowedge w) :
+      ∏ a : ob C, F (a ⊗ a) --> w := (pr1 W).
+
+    Coercion cowedge_pr : cowedge >-> Funclass.
+
     (** *** Coends *)
+    Definition is_coend (w : ob V) (W : cowedge w) : UU :=
+      ∏ v (V : cowedge v), iscontr (∑ f : w --> v, ∏ a , W a · f = V a).
+
+    Lemma isaprop_is_coend (w : ob V) (W : cowedge w) : isaprop (is_coend w W).
+    Proof.
+      do 2 (apply impred; intro).
+      apply isapropiscontr.
+    Qed.
+
+    Definition Coend : UU := ∑ w W , is_coend w W.
+
+    (** **** Accessors/coercions *)
+
+    Definition coend_ob (e : Coend) : ob V  := pr1 e.
+    Coercion coend_ob : Coend >-> ob.
+
+    Definition coend_cowedge (e : Coend) : cowedge e := pr1 (pr2 e).
+    Coercion coend_cowedge : Coend >-> cowedge.
+
+
   End Ends.
 
   Notation "∫↓ F" := (End F) (at level 40) : cat.
-  (* Notation "∫↑ F" := (Coend F) (at level 40) : cat. *)
+  Notation "∫↑ F" := (Coend F) (at level 40) : cat.
 
 End VProfunctors.
