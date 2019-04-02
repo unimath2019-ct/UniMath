@@ -5,6 +5,7 @@
 (** References:
     - https://link.springer.com/content/pdf/10.1007/BFb0060443.pdf
     - https://bartoszmilewski.com/2017/03/29/ends-and-coends/
+    - https://arxiv.org/abs/1501.02503
  *)
 
 (** ** Contents
