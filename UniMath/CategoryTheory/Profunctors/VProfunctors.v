@@ -50,7 +50,8 @@ Section VProfunctors.
 
   Local Open Scope cat.
 
-  (** Maps over the first argument contravariantly. *)
+  (** Maps over the first argument contravariantly. The name is inspired by Data.Profunctor in
+  Haskell. *)
   Definition lmap {C D : precategory} (F : C ↛ D) {a : ob C} {b b' : ob D} (g : b' --> b) :
     F (opp_ob b ⊗ a)  --> F (opp_ob b' ⊗ a).
   Proof.
@@ -60,7 +61,8 @@ Section VProfunctors.
       + exact (identity a).
   Defined.
 
-  (** Maps over the second argument covariantly. *)
+  (** Maps over the second argument covariantly. The name is inspired by Data.Profunctor in
+  Haskell. *)
   Definition rmap {C D : precategory} (F : C ↛ D) {a a' : ob C} {b : ob D} (f : a --> a') :
     F (opp_ob b ⊗ a)  --> F (opp_ob b ⊗ a').
   Proof.
@@ -85,6 +87,7 @@ Section VProfunctors.
                (d : dinatural_transformation_data F G) :=
       ∏ (a b : C) (f : a --> b) , lmap F f · d a · rmap G f = rmap F f · d b · lmap G f.
 
+    (** When the precategory has homsets, this is a proposition. *)
     Lemma isaprop_is_dinatural (hs : has_homsets V)
           {F : C ↛ C} {G : C ↛ C} (d : dinatural_transformation_data F G) : isaprop (is_dinatural d).
     Proof.
@@ -115,6 +118,7 @@ Section VProfunctors.
 
     Coercion dinatural_transformation_get_data : dinatural_transformation >-> Funclass.
 
+    (** See below for the non-local notation *)
     Local Notation "F ⇏ G" := (dinatural_transformation F G) (at level 39) : cat.
 
     (** *** Dinatural transformation from a natural transformation *)
@@ -162,11 +166,17 @@ Section VProfunctors.
 
   End VDinatural.
 
+  Notation "F ⇏ G" := (dinatural_transformation F G) (at level 39) : cat.
+
+  (** ** (Co)ends *)
+
   Section Ends.
-    (** *** Wedges *)
 
     Context {C : precategory}.
     Context (F : C ↛ C).
+
+    (** *** Wedges *)
+
     (** Wedge diagram:
           <<
               w -----> F(a, a)
@@ -176,6 +186,7 @@ Section VProfunctors.
             F(b, b) --> F(a, b)
           >>
      *)
+
     Definition is_wedge (w : ob V) (pi : ∏ a : ob C, w --> F (a ⊗ a)) : UU :=
       ∏ (a b : C) (f : a --> b) , pi a · rmap F f = pi b · lmap F f.
 
@@ -230,5 +241,6 @@ Section VProfunctors.
   End Ends.
 
   Notation "∫↓ F" := (End F) (at level 40) : cat.
+  (* Notation "∫↑ F" := (Coend F) (at level 40) : cat. *)
 
 End VProfunctors.
