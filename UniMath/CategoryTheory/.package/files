@@ -245,6 +245,7 @@ Bicategories/Discreteness.v
 
 Monoidal/MonoidalCategories.v
 Monoidal/MonoidalFunctors.v
+Monoidal/BraidedMonoidalPrecategories.v
 Monoidal/CategoriesOfMonoids.v
 Monoidal/Actions.v
 Monoidal/Strengths.v
