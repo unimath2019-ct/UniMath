@@ -19,6 +19,8 @@
       - Accessors/coercions
     - Cowedges
     - Coends
+      - Accessors/coercions
+    - Coends and ends
 
  *)
 
@@ -287,10 +289,35 @@ Section VProfunctors.
     Definition coend_cowedge (e : Coend) : cowedge e := pr1 (pr2 e).
     Coercion coend_cowedge : Coend >-> cowedge.
 
-
   End Ends.
 
   Notation "∫↓ F" := (End F) (at level 40) : cat.
   Notation "∫↑ F" := (Coend F) (at level 40) : cat.
 
 End VProfunctors.
+
+(** *** Coends and ends *)
+Section CoendsAndEnds.
+  Context {V : precategory}.
+  Context {C : precategory}.
+
+  (* This could be defined at the end of PrecatgeoryBinProduct.v *)
+  Definition swap_functor {C D : precategory} :
+    functor (precategory_binproduct C D) (precategory_binproduct D C) :=
+    pair_functor (pr2_functor C D) (pr1_functor C D) □ bindelta_functor (precategory_binproduct C D).
+
+  Definition profunctor_opp (F : v_profunctor V C C) : v_profunctor (V^op) C C.
+  Proof.
+    unfold v_profunctor in *.
+    exact (functor_opp (F □ swap_functor)).
+  Defined.
+
+  (* By definition, an end for F : C^op × C → V is a coend for
+     F^op : C^op × C ≅ C × C^op → V^op and viceversa. *)
+  Proposition coend_is_opposite_end {F : v_profunctor V C C} (e : Coend V F) : End V^op (profunctor_opp F).
+  Proof. exact e. Qed.
+
+  Proposition end_is_opposite_coend {F : v_profunctor V C C} (e : End V F) : Coend V^op (profunctor_opp F).
+  Proof. exact e. Qed.
+
+End CoendsAndEnds.
