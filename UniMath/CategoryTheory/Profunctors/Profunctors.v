@@ -1,6 +1,6 @@
 (** * Profunctors *)
 
-(** V-valued profunctors for an arbitrary category V. *)
+(** E-valued profunctors for an arbitrary category E. *)
 
 (** References:
     - https://link.springer.com/content/pdf/10.1007/BFb0060443.pdf
@@ -38,18 +38,18 @@ Require Import UniMath.CategoryTheory.categories.HSET.Univalence.
 
 Local Open Scope cat.
 
-(** *** V-valued profunctors. *)
-Section VProfunctors.
-  Context (V : precategory).
+(** *** E-valued profunctors. *)
+Section Profunctors.
+  Context (E : precategory).
 
   (** * Definition *)
-  (** A V-valued profunctor [C ↛ D] is a functor [D^op × C → V]. *)
-  Definition v_profunctor (C D : precategory) : UU :=
-    functor (precategory_binproduct (opp_precat D) C) V.
+  (** A E-valued profunctor [C ↛ D] is a functor [D^op × C → E]. *)
+  Definition vprofunctor (C D : precategory) : UU :=
+    functor (precategory_binproduct (opp_precat D) C) E.
 
-  Identity Coercion vprofunctor_coercion : v_profunctor >-> functor.
+  Identity Coercion vprofunctor_coercion : vprofunctor >-> functor.
 
-  Infix "↛" := v_profunctor (at level 99, only parsing) : cat.
+  Infix "↛" := vprofunctor (at level 99, only parsing) : cat.
 
   Local Notation "A ⊗ B" := (precatbinprodpair A B).
 
@@ -79,12 +79,12 @@ Section VProfunctors.
 
 
   (** ** Dinatural transformations *)
-  Section VDinatural.
+  Section Dinatural.
 
     Context {C : precategory}.
 
     (** A dinatural transformation is given by a family of morphisms f(a,a) → g(a,a) in the
-    category V. *)
+    category E. *)
     Definition dinatural_transformation_data (f : C ↛ C) (g : C ↛ C) : UU :=
       ∏ x : C , f (x ⊗ x) --> g (x ⊗ x).
 
@@ -93,7 +93,7 @@ Section VProfunctors.
       ∏ (a b : C) (f : a --> b) , lmap F f · d a · rmap G f = rmap F f · d b · lmap G f.
 
     (** When the precategory has homsets, this is a proposition. *)
-    Lemma isaprop_is_dinatural (hs : has_homsets V)
+    Lemma isaprop_is_dinatural (hs : has_homsets E)
           {F : C ↛ C} {G : C ↛ C} (d : dinatural_transformation_data F G) : isaprop (is_dinatural d).
     Proof.
       abstract (do 3 (apply impred; intro) ; apply hs).
@@ -169,7 +169,7 @@ Section VProfunctors.
         apply idpath.
     Qed.
 
-  End VDinatural.
+  End Dinatural.
 
   Notation "F ⇏ G" := (dinatural_transformation F G) (at level 39) : cat.
 
@@ -192,10 +192,10 @@ Section VProfunctors.
           >>
      *)
 
-    Definition is_wedge (w : ob V) (pi : ∏ a : ob C, w --> F (a ⊗ a)) : UU :=
+    Definition is_wedge (w : ob E) (pi : ∏ a : ob C, w --> F (a ⊗ a)) : UU :=
       ∏ (a b : C) (f : a --> b) , pi a · rmap F f = pi b · lmap F f.
 
-    Lemma isaprop_is_wedge (hs : has_homsets V) (w : ob V) (pi : ∏ a : ob C, w --> F (a ⊗ a))
+    Lemma isaprop_is_wedge (hs : has_homsets E) (w : ob E) (pi : ∏ a : ob C, w --> F (a ⊗ a))
       : isaprop (is_wedge w pi).
     Proof.
       do 3 (apply impred; intro).
@@ -203,10 +203,10 @@ Section VProfunctors.
     Qed.
 
     (** Following the convention for limits, the tip is explicit in the type. *)
-    Definition wedge (w : ob V) : UU :=
+    Definition wedge (w : ob E) : UU :=
       ∑ pi : (∏ a : ob C, w --> F (a ⊗ a)), is_wedge w pi.
 
-    Definition make_wedge (w : ob V) (pi : (∏ a : ob C, (w : ob V) --> F (a ⊗ a))) :
+    Definition make_wedge (w : ob E) (pi : (∏ a : ob C, (w : ob E) --> F (a ⊗ a))) :
       (∏ (a b : ob C) (f : a --> b), pi a · rmap F f = pi b · lmap F f) -> wedge w.
     Proof.
       intro.
@@ -215,15 +215,15 @@ Section VProfunctors.
       - assumption.
     Qed.
 
-    Definition wedge_pr (w : ob V) (W : wedge w) :
+    Definition wedge_pr (w : ob E) (W : wedge w) :
       ∏ a : ob C, w --> F (a ⊗ a) := (pr1 W).
 
     Coercion wedge_pr : wedge >-> Funclass.
 
-    Definition is_end (w : ob V) (W : wedge w) : UU :=
+    Definition is_end (w : ob E) (W : wedge w) : UU :=
       ∏ v (V : wedge v), iscontr (∑ f : v --> w, ∏ a , f · W a = V a).
 
-    Lemma isaprop_is_end (w : ob V) (W : wedge w) : isaprop (is_end w W).
+    Lemma isaprop_is_end (w : ob E) (W : wedge w) : isaprop (is_end w W).
     Proof.
       do 2 (apply impred; intro).
       apply isapropiscontr.
@@ -235,27 +235,27 @@ Section VProfunctors.
 
     (** **** Accessors/coercions *)
 
-    Definition end_ob (e : End) : ob V  := pr1 e.
+    Definition end_ob (e : End) : ob E  := pr1 e.
     Coercion end_ob : End >-> ob.
 
     Definition end_wedge (e : End) : wedge e := pr1 (pr2 e).
     Coercion end_wedge : End >-> wedge.
 
     (** *** Cowedges *)
-    Definition is_cowedge (w : ob V) (pi : ∏ a : ob C, F (a ⊗ a) --> w) : UU :=
+    Definition is_cowedge (w : ob E) (pi : ∏ a : ob C, F (a ⊗ a) --> w) : UU :=
       ∏ (a b : C) (f : a --> b) , lmap F f · pi a = rmap F f · pi b.
 
-    Lemma isaprop_is_cowedge (hs : has_homsets V) (w : ob V) (pi : ∏ a : ob C, F (a ⊗ a) --> w)
+    Lemma isaprop_is_cowedge (hs : has_homsets E) (w : ob E) (pi : ∏ a : ob C, F (a ⊗ a) --> w)
       : isaprop (is_cowedge w pi).
     Proof.
       do 3 (apply impred; intro).
       apply hs.
     Qed.
 
-    Definition cowedge (w : ob V) : UU :=
+    Definition cowedge (w : ob E) : UU :=
       ∑ pi : (∏ a : ob C, F (a ⊗ a) --> w), is_cowedge w pi.
 
-    Definition make_cowedge (w : ob V) (pi : (∏ a : ob C, F (a ⊗ a) --> (w : ob V))) :
+    Definition make_cowedge (w : ob E) (pi : (∏ a : ob C, F (a ⊗ a) --> (w : ob E))) :
       (∏ (a b : ob C) (f : a --> b), lmap F f · pi a = rmap F f · pi b) -> cowedge w.
     Proof.
       intro.
@@ -264,16 +264,16 @@ Section VProfunctors.
       - assumption.
     Qed.
 
-    Definition cowedge_pr (w : ob V) (W : cowedge w) :
+    Definition cowedge_pr (w : ob E) (W : cowedge w) :
       ∏ a : ob C, F (a ⊗ a) --> w := (pr1 W).
 
     Coercion cowedge_pr : cowedge >-> Funclass.
 
     (** *** Coends *)
-    Definition is_coend (w : ob V) (W : cowedge w) : UU :=
+    Definition is_coend (w : ob E) (W : cowedge w) : UU :=
       ∏ v (V : cowedge v), iscontr (∑ f : w --> v, ∏ a , W a · f = V a).
 
-    Lemma isaprop_is_coend (w : ob V) (W : cowedge w) : isaprop (is_coend w W).
+    Lemma isaprop_is_coend (w : ob E) (W : cowedge w) : isaprop (is_coend w W).
     Proof.
       do 2 (apply impred; intro).
       apply isapropiscontr.
@@ -283,7 +283,7 @@ Section VProfunctors.
 
     (** **** Accessors/coercions *)
 
-    Definition coend_ob (e : Coend) : ob V  := pr1 e.
+    Definition coend_ob (e : Coend) : ob E  := pr1 e.
     Coercion coend_ob : Coend >-> ob.
 
     Definition coend_cowedge (e : Coend) : cowedge e := pr1 (pr2 e).
@@ -294,11 +294,11 @@ Section VProfunctors.
   Notation "∫↓ F" := (End F) (at level 40) : cat.
   Notation "∫↑ F" := (Coend F) (at level 40) : cat.
 
-End VProfunctors.
+End Profunctors.
 
 (** *** Coends and ends *)
 Section CoendsAndEnds.
-  Context {V : precategory}.
+  Context {E : precategory}.
   Context {C : precategory}.
 
   (* This could be defined at the end of PrecatgeoryBinProduct.v *)
@@ -306,18 +306,18 @@ Section CoendsAndEnds.
     functor (precategory_binproduct C D) (precategory_binproduct D C) :=
     pair_functor (pr2_functor C D) (pr1_functor C D) □ bindelta_functor (precategory_binproduct C D).
 
-  Definition profunctor_opp (F : v_profunctor V C C) : v_profunctor (V^op) C C.
+  Definition profunctor_opp (F : vprofunctor E C C) : vprofunctor (E^op) C C.
   Proof.
-    unfold v_profunctor in *.
+    unfold vprofunctor in *.
     exact (functor_opp (F □ swap_functor)).
   Defined.
 
   (* By definition, an end for F : C^op × C → V is a coend for
      F^op : C^op × C ≅ C × C^op → V^op and viceversa. *)
-  Proposition coend_is_opposite_end {F : v_profunctor V C C} (e : Coend V F) : End V^op (profunctor_opp F).
+  Proposition coend_is_opposite_end {F : vprofunctor E C C} (e : Coend E F) : End E^op (profunctor_opp F).
   Proof. exact e. Qed.
 
-  Proposition end_is_opposite_coend {F : v_profunctor V C C} (e : End V F) : Coend V^op (profunctor_opp F).
+  Proposition end_is_opposite_coend {F : vprofunctor E C C} (e : End E F) : Coend E^op (profunctor_opp F).
   Proof. exact e. Qed.
 
 End CoendsAndEnds.
