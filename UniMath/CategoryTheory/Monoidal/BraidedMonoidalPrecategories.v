@@ -6,10 +6,8 @@
 
 Require Import UniMath.Foundations.PartD.
 Require Import UniMath.CategoryTheory.Core.Categories.
-Require Import UniMath.CategoryTheory.Core.Isos.
 Require Import UniMath.CategoryTheory.Core.NaturalTransformations.
 Require Import UniMath.CategoryTheory.Core.Functors.
-Require Import UniMath.CategoryTheory.ProductCategory.
 Require Import UniMath.CategoryTheory.PrecategoryBinProduct.
 Require Import UniMath.CategoryTheory.Monoidal.MonoidalCategories.
 
@@ -20,11 +18,8 @@ Section Braiding.
 (** In this section, fix a monoidal category. *)
 Context (Mon_V : monoidal_precat).
 Let V        := monoidal_precat_precat Mon_V.
-Let I        := monoidal_precat_unit Mon_V.
 Let tensor   := monoidal_precat_tensor Mon_V.
 Let α        := monoidal_precat_associator Mon_V.
-Let l_unitor := monoidal_precat_left_unitor Mon_V.
-Let r_unitor := monoidal_precat_right_unitor Mon_V.
 
 Notation "X ⊗ Y" := (tensor (X, Y)).
 Notation "f #⊗ g" := (#tensor (f #, g)) (at level 31).
