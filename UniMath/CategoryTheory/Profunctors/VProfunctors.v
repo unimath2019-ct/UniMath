@@ -1,3 +1,26 @@
+(** * Profunctors *)
+
+(** V-valued profunctors for an arbitrary category V. *)
+
+(** References:
+    - https://link.springer.com/content/pdf/10.1007/BFb0060443.pdf
+    - https://bartoszmilewski.com/2017/03/29/ends-and-coends/
+ *)
+
+(** ** Contents
+
+  - Definition
+  - Dinatural transformations
+    - Dinatural transformation from a natural transformation
+  - (Co)ends
+    - Wedges
+    - Ends
+      - Accessors/coercions
+    - Cowedges
+    - Coends
+
+ *)
+
 Require Import UniMath.Foundations.Preamble.
 Require Import UniMath.Foundations.Propositions.
 Require Import UniMath.Foundations.Sets.
@@ -10,18 +33,12 @@ Require Import UniMath.CategoryTheory.PrecategoryBinProduct.
 Require Import UniMath.CategoryTheory.opp_precat.
 Require Import UniMath.CategoryTheory.categories.HSET.Univalence.
 
-Require Import UniMath.CategoryTheory.Monoidal.MonoidalCategories.
-
-(** *** V-valued functors. *)
+(** *** V-valued profunctors. *)
 Section VProfunctors.
-  Context (Mon_V : monoidal_precat).
-  Let V        := monoidal_precat_precat Mon_V.
-  Let I        := monoidal_precat_unit Mon_V.
-  Let tensor   := monoidal_precat_tensor Mon_V.
-  Let α        := monoidal_precat_associator Mon_V.
-  Let l_unitor := monoidal_precat_left_unitor Mon_V.
-  Let r_unitor := monoidal_precat_right_unitor Mon_V.
+  Context (V : precategory).
 
+  (** * Definition *)
+  (** A V-valued profunctor [C ↛ D] is a functor [D^op × C → V]. *)
   Definition v_profunctor (C D : precategory) : UU :=
     functor (precategory_binproduct (opp_precat D) C) V.
 
