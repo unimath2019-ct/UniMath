@@ -215,15 +215,15 @@ DisplayedCats/ComprehensionC.v
 # Bicategories/PseudoFunctors/Display/Compositor.v
 # Bicategories/PseudoFunctors/Display/PseudoFunctorBicat.v
 
-Bicategories/PseudoFunctors/PseudoFunctor.v
-Bicategories/PseudoFunctors/Examples/Identity.v
-Bicategories/PseudoFunctors/Examples/Composition.v
-Bicategories/PseudoFunctors/Examples/ApFunctor.v
-Bicategories/PseudoFunctors/Examples/OpFunctor.v
-Bicategories/PseudoFunctors/Examples/Projection.v
-Bicategories/Transformations/PseudoTransformation.v
-Bicategories/PseudoFunctors/Presheaves.v
-Bicategories/PseudoFunctors/Representable.v
+# Bicategories/PseudoFunctors/PseudoFunctor.v
+# Bicategories/PseudoFunctors/Examples/Identity.v
+# Bicategories/PseudoFunctors/Examples/Composition.v
+# Bicategories/PseudoFunctors/Examples/ApFunctor.v
+# Bicategories/PseudoFunctors/Examples/OpFunctor.v
+# Bicategories/PseudoFunctors/Examples/Projection.v
+# Bicategories/Transformations/PseudoTransformation.v
+# Bicategories/PseudoFunctors/Presheaves.v
+# Bicategories/PseudoFunctors/Representable.v
 
 # Bicategories/DisplayedBicats/Examples/PointedOneTypes.v
 # Bicategories/DisplayedBicats/Examples/Algebras.v
@@ -248,7 +248,6 @@ Bicategories/PseudoFunctors/Representable.v
 
 Monoidal/MonoidalCategories.v
 Monoidal/MonoidalFunctors.v
-Monoidal/ListCategories.v
 Monoidal/BraidedMonoidalPrecategories.v
 Monoidal/CategoriesOfMonoids.v
 Monoidal/Actions.v
