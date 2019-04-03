@@ -31,39 +31,40 @@ Local Open Scope cat.
 (** ** Presheaves                                                                      *)
 (* ----------------------------------------------------------------------------------- *)
 
-Section Representable.
+Section IsoInvertible2Cells.
 
-Variable (C : bicat) (C_is_univalent_2_1 : is_univalent_2_1 C).
+Context {C : bicat}.
+Variable (C_is_univalent_2_1 : is_univalent_2_1 C).
 
-Definition pspsh := psfunctor (op1_bicat C) bicat_of_cats.
+Definition is_inv2cell_to_is_iso {a b : C} (f g : hom a b) (η : f ==> g) :
+  is_invertible_2cell η → is_iso η.
+Proof.
+  intros p h.
+  use isweq_iso.
+  - intro ψ.
+    cbn in *.
+    exact (p^-1 • ψ).
+  - intro ψ.
+    cbn in *.
+    rewrite vassocr.
+    rewrite vcomp_lid.
+    apply id2_left.
+  - intro ψ.
+    cbn in *.
+    rewrite vassocr.
+    rewrite vcomp_rinv.
+    apply id2_left.
+Defined.
 
 Definition inv2cell_to_iso {a b : C} (f g : hom a b) : invertible_2cell f g → iso f g.
 Proof.
   intro i.
-  destruct i as [η ηinv].
-  destruct ηinv as [φ eqs].
-  destruct eqs as [eq1 eq2].
   use mk_iso.
-  - exact η.
-  - intro h.
-    use isweq_iso.
-    + intro ψ.
-      exact (φ • ψ).
-    + intro ψ.
-      simpl.
-      unfold precomp_with.
-      refine ((_@_)@_).
-      * apply vassocr.
-      * exact (maponpaths (λ x, x • ψ) eq2).
-      * apply id2_left.
-    + intro ψ.
-      simpl.
-      unfold precomp_with.
-      refine ((_@_)@_).
-      * apply vassocr.
-      * exact (maponpaths (λ x, x • ψ) eq1).
-      * apply id2_left.
+  - apply i.
+  - apply is_inv2cell_to_is_iso.
+    apply i.
 Defined.
+
 
 Definition iso_to_inv2cell {a b : C} (f g : hom a b) : iso f g → invertible_2cell f g.
 Proof.
@@ -113,13 +114,24 @@ Proof.
     apply idpath.
 Defined.
 
+End IsoInvertible2Cells.
+
+Section Representable.
+
+Context {C : bicat}.
+Variable (C_is_univalent_2_1 : is_univalent_2_1 C).
+
+Definition pspsh := psfunctor (op1_bicat C) bicat_of_cats.
+
+
 Definition representable_data_cat (X Y : C) : univalent_category.
 Proof.
   use mk_category.
   + exact (hom Y X).
   + split.
-    exact idtoiso_weq.
-    exact (pr2 C Y X).
+    apply idtoiso_weq.
+    - exact C_is_univalent_2_1.
+    - exact (pr2 C Y X).
 Defined.
 
 Definition representable_data_fun (X Y Z : C) (f : op1_bicat C ⟦ Y, Z ⟧)
@@ -236,12 +248,30 @@ Proof.
       apply rwhisker_lwhisker.
 Qed.
 
+
+Definition representable_invertible_cells (X : C) : invertible_cells (representable_data X).
+Proof.
+  split.
+  - intro Y.
+    use is_nat_iso_to_is_invertible_2cell.
+    intro f.
+    simpl.
+    apply is_inv2cell_to_is_iso.
+    is_iso.
+  - intros Y Z W f g.
+    use is_nat_iso_to_is_invertible_2cell.
+    intro h.
+    simpl.
+    apply is_inv2cell_to_is_iso.
+    is_iso.
+Defined.
+
 Definition representable (X : C) : pspsh.
 Proof.
   use mk_psfunctor.
   - exact (representable_data X).
   - exact (representable_laws X).
-  - split.
-    + simpl.
+  - exact (representable_invertible_cells X).
+Defined.
 
-    Definition is_univalent_2_1_lem : ∏ (X Y : C) (f g : C⟦a,b⟧), isweq (idtoiso_2_1 f g).
+End Representable.
