@@ -29,6 +29,7 @@ Epis.v
 categories/HSET/MonoEpiIso.v
 categories/HSET/Univalence.v
 Profunctors/Core.v
+Profunctors/Profunctors.v
 CategoriesWithBinOps.v
 PrecategoriesWithAbgrops.v
 limits/cones.v
@@ -221,6 +222,7 @@ Bicategories/PseudoFunctors/Examples/ApFunctor.v
 Bicategories/PseudoFunctors/Examples/OpFunctor.v
 Bicategories/PseudoFunctors/Examples/Projection.v
 Bicategories/Transformations/PseudoTransformation.v
+Bicategories/Modifications/Modification.v
 Bicategories/PseudoFunctors/Presheaves.v
 Bicategories/PseudoFunctors/Representable.v
 
