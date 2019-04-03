@@ -29,6 +29,7 @@ Epis.v
 categories/HSET/MonoEpiIso.v
 categories/HSET/Univalence.v
 Profunctors/Core.v
+Profunctors/Profunctors.v
 CategoriesWithBinOps.v
 PrecategoriesWithAbgrops.v
 limits/cones.v
