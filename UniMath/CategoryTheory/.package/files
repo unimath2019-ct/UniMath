@@ -29,6 +29,7 @@ Epis.v
 categories/HSET/MonoEpiIso.v
 categories/HSET/Univalence.v
 Profunctors/Core.v
+Profunctors/Profunctors.v
 CategoriesWithBinOps.v
 PrecategoriesWithAbgrops.v
 limits/cones.v
@@ -214,13 +215,15 @@ DisplayedCats/ComprehensionC.v
 # Bicategories/PseudoFunctors/Display/Compositor.v
 # Bicategories/PseudoFunctors/Display/PseudoFunctorBicat.v
 
-# Bicategories/PseudoFunctors/PseudoFunctor.v
-# Bicategories/PseudoFunctors/Examples/Identity.v
-# Bicategories/PseudoFunctors/Examples/Composition.v
-# Bicategories/PseudoFunctors/Examples/ApFunctor.v
-# Bicategories/PseudoFunctors/Examples/OpFunctor.v
-# Bicategories/PseudoFunctors/Examples/Projection.v
-# Bicategories/Transformations/PseudoTransformation.v
+Bicategories/PseudoFunctors/PseudoFunctor.v
+Bicategories/PseudoFunctors/Examples/Identity.v
+Bicategories/PseudoFunctors/Examples/Composition.v
+Bicategories/PseudoFunctors/Examples/ApFunctor.v
+Bicategories/PseudoFunctors/Examples/OpFunctor.v
+Bicategories/PseudoFunctors/Examples/Projection.v
+Bicategories/Transformations/PseudoTransformation.v
+Bicategories/PseudoFunctors/Presheaves.v
+Bicategories/PseudoFunctors/Representable.v
 
 # Bicategories/DisplayedBicats/Examples/PointedOneTypes.v
 # Bicategories/DisplayedBicats/Examples/Algebras.v
