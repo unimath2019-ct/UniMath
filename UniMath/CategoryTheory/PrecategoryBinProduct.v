@@ -176,11 +176,13 @@ Section univalence.
 
   Variable (C D : univalent_category).
 
-  (* (a,b) = (x,y) -------------> iso (a,b) (x,y)
+  (** We factor     idtoiso       as in this diagram
+     (a,b) = (x,y) -------------> iso (a,b) (x,y)
            |                       ^
            |                       |
            v                       |
-     a = b × x = y --> (iso a b) × (iso x y) *)
+     a = b × x = y --> (iso a b) × (iso x y)
+   where the other composite is show to be an equivalence.*)
 
   Definition id_to_prodid_weq (v w : precategory_binproduct C D) :
     v = w ≃ (dirprod (pr1 v = pr1 w) (pr2 v = pr2 w)).
@@ -196,7 +198,6 @@ Section univalence.
     - apply (pr2 C).
     - apply (pr2 D).
   Defined.
-
 
   Definition prodiso_to_iso (v w : precategory_binproduct C D) :
     (dirprod (iso (pr1 v) (pr1 w)) (iso (pr2 v) (pr2 w))) -> iso v w.
