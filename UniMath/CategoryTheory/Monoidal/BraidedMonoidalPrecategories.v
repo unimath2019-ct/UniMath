@@ -65,5 +65,44 @@ Section Braided_Monoidal_Precat_Acessors.
 Context (M : braided_monoidal_precat).
 
 Definition braided_monoidal_precat_monoidal_precat := pr1 M.
+Definition braided_monoidal_precat_braiding := pr1 (pr2 M).
 
 End Braided_Monoidal_Precat_Acessors.
+
+Coercion braided_monoidal_precat_monoidal_precat : braided_monoidal_precat >-> monoidal_precat.
+
+
+
+Section CoherenceLemmas.
+(** TODO: It would be nice to prove that the braiding commutes with the units. *)
+(** https://math.stackexchange.com/questions/912510/coherence-in-braided-monoidal-categories. **)
+  Context (M : braided_monoidal_precat).
+  Let Mp := monoidal_precat_precat M.
+  Let tensor   := monoidal_precat_tensor M.
+  Let α        := pr1 (monoidal_precat_associator M).
+  Let γ        := pr1 (braided_monoidal_precat_braiding M).
+  Let ρ        := pr1 (monoidal_precat_right_unitor M).
+  Let l        := pr1 (monoidal_precat_left_unitor M).
+  Let i        := monoidal_precat_unit M.
+
+  (* Lemmas about the monoidal structure *)
+  Notation "X ⊗ Y" := (tensor (X, Y)).
+  Notation "f #⊗ g" := (#tensor (f #, g)) (at level 31).
+
+  Lemma double_right_unitor :
+    ∏ (a : Mp) , α ((a , i) , i) · (id a #⊗ (ρ i)) = (ρ (a ⊗ i)).
+  Proof.
+  Admitted.
+
+  (* Lemmas about braiding. *)
+  Lemma units_commute_with_braiding_l :
+    ∏ (a : Mp) , γ (i , a) · ρ a = l a.
+  Proof.
+  Admitted.
+
+  Lemma units_commute_with_braiding_r :
+    ∏ (a : Mp) , γ (a , i) · l a = ρ a.
+  Proof.
+  Admitted.
+
+End CoherenceLemmas.
