@@ -22,6 +22,10 @@ Defined.
 End preamble.
 
 (** * Lists over an arbitrary type *)
+
+Delimit Scope list with list.
+Local Open Scope list.
+
 Section lists.
 
 Context {A : UU}.
@@ -36,8 +40,8 @@ Definition nil : list := (0,,tt).
 Definition cons (x : A) (xs : list) : list :=
   (S (pr1 xs),, (x,, pr2 xs)).
 
-Local Notation "[]" := nil (at level 0, format "[]").
-Local Infix "::" := cons.
+Notation "[]" := nil (at level 0, format "[]") : list.
+Infix "::" := cons : list.
 
 Lemma list_ind : ∏ (P : list -> UU),
      P nil
@@ -209,8 +213,8 @@ Qed.
 
 End more_lists.
 
-Local Notation "[]" := nil (at level 0, format "[]").
-Local Infix "::" := cons.
+Notation "[]" := nil (at level 0, format "[]") : list.
+Infix "::" := cons : list.
 
 (** concatenate two lists  *)
 
