@@ -31,14 +31,17 @@
 *)
 
 
-Require Import UniMath.Foundations.PartD.
+Require Import UniMath.Foundations.All.
+Require Import UniMath.MoreFoundations.All.
 
 Require Import UniMath.CategoryTheory.Core.Categories.
 Require Import UniMath.CategoryTheory.Core.Isos.
 Require Import UniMath.CategoryTheory.Core.Functors.
 Require Import UniMath.CategoryTheory.Core.NaturalTransformations.
+Require Import UniMath.CategoryTheory.Core.Univalence.
 Require Import UniMath.CategoryTheory.FunctorCategory.
 Require Import UniMath.CategoryTheory.opp_precat.
+
 Local Open Scope cat.
 
 Definition precategory_binproduct_mor (C D : precategory_ob_mor) (cd cd' : C × D) := pr1 cd --> pr1 cd' × pr2 cd --> pr2 cd'.
@@ -166,6 +169,126 @@ Proof.
   - apply iso_inv_after_iso.
   - apply iso_inv_after_iso.
 Defined.
+
+(** Univalence of binary products of categories *)
+
+Section univalence.
+
+  Variable (C D : univalent_category).
+
+  (** We factor     idtoiso       as in this diagram
+     (a,b) = (x,y) -------------> iso (a,b) (x,y)
+           |                       ^
+           |                       |
+           v                       |
+     a = b × x = y --> (iso a b) × (iso x y)
+   where the other composite is show to be an equivalence.*)
+
+  Definition id_to_prodid_weq (v w : precategory_binproduct C D) :
+    v = w ≃ (dirprod (pr1 v = pr1 w) (pr2 v = pr2 w)).
+  Proof.
+    exact pathsdirprodweq.
+  Defined.
+
+  Definition prodid_to_prodiso_weq (v w : precategory_binproduct C D) :
+    (dirprod (pr1 v = pr1 w) (pr2 v = pr2 w)) ≃ (dirprod (iso (pr1 v) (pr1 w))
+                                                         (iso (pr2 v) (pr2 w))).
+  Proof.
+    apply weqdirprodf ; apply (weqpair idtoiso).
+    - apply (pr2 C).
+    - apply (pr2 D).
+  Defined.
+
+  Definition prodiso_to_iso (v w : precategory_binproduct C D) :
+    (dirprod (iso (pr1 v) (pr1 w)) (iso (pr2 v) (pr2 w))) -> iso v w.
+  Proof.
+    intro.
+    exists (pr1 (pr1 X) ,, pr1 (pr2 X)).
+    use is_iso_qinv.
+    { exact (inv_from_iso (pr1 X) ,, inv_from_iso (pr2 X)). }
+    apply dirprodpair ; cbn ; apply pathsdirprod ;
+      try (apply iso_inv_after_iso) ; try (apply iso_after_iso_inv).
+  Defined.
+
+  Definition iso_to_prodiso (v w : precategory_binproduct C D) :
+    iso v w -> (dirprod (iso (pr1 v) (pr1 w)) (iso (pr2 v) (pr2 w))).
+  Proof.
+    intro.
+    apply dirprodpair.
+    - exists (pr1 (pr1 X)).
+      use is_iso_qinv.
+      { exact (pr1 (inv_from_iso X)). }
+      apply dirprodpair.
+      + exact (maponpaths dirprod_pr1 (iso_inv_after_iso X)).
+      + exact (maponpaths dirprod_pr1 (iso_after_iso_inv X)).
+    - exists (pr2 (pr1 X)).
+      use is_iso_qinv.
+      { exact (pr2 (inv_from_iso X)). }
+      apply dirprodpair.
+      + exact (maponpaths dirprod_pr2 (iso_inv_after_iso X)).
+      + exact (maponpaths dirprod_pr2 (iso_after_iso_inv X)).
+  Defined.
+
+  Definition prod_iso_to_iso_homot1 (v w : precategory_binproduct C D)
+             (x : dirprod (iso (pr1 v) (pr1 w)) (iso (pr2 v) (pr2 w))) :
+    (iso_to_prodiso v w (prodiso_to_iso v w x )) = x.
+  Proof.
+    apply dirprod_paths ;
+      apply (subtypeEquality (fun f => isaprop_is_iso _ _ f)) ;
+      apply idpath.
+  Defined.
+
+  Definition prod_iso_to_iso_homot2 (v w : precategory_binproduct C D)
+             (x : iso v w) : (prodiso_to_iso v w (iso_to_prodiso v w x )) = x.
+  Proof.
+    apply (subtypeEquality (fun f => isaprop_is_iso _ _ f)).
+    apply dirprod_paths ; reflexivity.
+  Defined.
+
+  Definition prodiso_to_iso_weq (v w : precategory_binproduct C D) :
+    (dirprod (iso (pr1 v) (pr1 w)) (iso (pr2 v) (pr2 w))) ≃ iso v w.
+  Proof.
+    apply (weq_iso (prodiso_to_iso v w) (iso_to_prodiso v w)).
+    - apply prod_iso_to_iso_homot1.
+    - apply prod_iso_to_iso_homot2.
+  Defined.
+
+  Definition factored_idtoiso (v w : precategory_binproduct C D) :
+    v = w ≃ iso v w.
+  Proof.
+    refine (_ ∘ _)%weq.
+    refine (_ ∘ _)%weq.
+    apply id_to_prodid_weq.
+    apply prodid_to_prodiso_weq.
+    apply prodiso_to_iso_weq.
+  Defined.
+
+  Definition idtoiso_is_weq (v w : precategory_binproduct C D) :
+    isweq (@idtoiso _ v w).
+  Proof.
+    Search isweq.
+    apply (isweqhomot (factored_idtoiso v w)).
+    - intro p.
+      induction p.
+      apply (subtypeEquality (fun f => isaprop_is_iso _ _ f)).
+      apply idpath.
+    - apply (factored_idtoiso v w).
+  Defined.
+
+  Definition is_univalent_binproduct :
+    is_univalent (precategory_binproduct C D).
+  Proof.
+    apply dirprodpair.
+    - apply idtoiso_is_weq.
+    - apply has_homsets_precategory_binproduct.
+      + apply C.
+      + apply D.
+  Defined.
+
+  Definition univalent_binproduct : univalent_category
+    := tpair _ _ is_univalent_binproduct.
+
+End univalence.
 
 (** Associativity functors *)
 Section assoc.

@@ -222,9 +222,9 @@ Bicategories/PseudoFunctors/Examples/ApFunctor.v
 Bicategories/PseudoFunctors/Examples/OpFunctor.v
 Bicategories/PseudoFunctors/Examples/Projection.v
 Bicategories/Transformations/PseudoTransformation.v
+Bicategories/Modifications/Modification.v
 Bicategories/PseudoFunctors/Presheaves.v
 Bicategories/PseudoFunctors/Representable.v
-
 
 Bicategories/DisplayedBicats/Examples/PointedOneTypes.v
 Bicategories/DisplayedBicats/Examples/Algebras.v
