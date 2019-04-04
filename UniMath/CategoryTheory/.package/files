@@ -225,6 +225,7 @@ Bicategories/Transformations/PseudoTransformation.v
 Bicategories/Modifications/Modification.v
 Bicategories/PseudoFunctors/Presheaves.v
 Bicategories/PseudoFunctors/Representable.v
+Bicategories/PseudoFunctors/Yoneda.v
 
 Bicategories/DisplayedBicats/Examples/PointedOneTypes.v
 Bicategories/DisplayedBicats/Examples/Algebras.v
