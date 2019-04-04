@@ -29,14 +29,18 @@ Section OppositeEnrichedPrecategory.
 
   Context {V : braided_monoidal_precat}.
   Let pV       := monoidal_precat_precat V.
-  Let γ        := braided_monoidal_precat_braiding V.
+  Let γ        := pr1 (braided_monoidal_precat_braiding V).
   Let I        := monoidal_precat_unit V.
   Let tensor   := monoidal_precat_tensor V.
   Let α        := monoidal_precat_associator V.
-  Let l_unitor := monoidal_precat_left_unitor V.
-  Let r_unitor := monoidal_precat_right_unitor V.
+  Let l        := pr1 (monoidal_precat_left_unitor V).
+  Let ρ        := pr1 (monoidal_precat_right_unitor V).
 
-  Context (C : enriched_precat_data V).
+  Context (C : enriched_precat V).
+  Let dC   := pr1 C.
+  Let Vhom := enriched_cat_mor (d := dC) V.
+  Let Vid  := enriched_cat_id (d := dC) V.
+  Let Vcomp  := enriched_cat_comp (d := dC) V.
 
   Notation "X ⊗ Y"  := (tensor (X , Y)) : enriched.
   Notation "f #⊗ g" := (#tensor (f #, g)) (at level 31) : enriched.
@@ -48,21 +52,36 @@ Section OppositeEnrichedPrecategory.
   Proof.
     use (mk_enriched_precat_data V).
     * exact (enriched_cat_ob V C).
-    * intros a b. exact (enriched_cat_mor V b a).
+    * intros a b. exact (Vhom b a).
     * intro a. exact (enriched_cat_id V a).
     * intros x y z. simpl.
-      exact ((pr1 γ (enriched_cat_mor V z y , enriched_cat_mor V y x)) · (enriched_cat_comp V z y x)).
+      exact ((pr1 γ (Vhom z y , Vhom y x)) · (Vcomp z y x)).
   Defined.
 
   (** We check the identity axioms for the enriched category. *)
-  (* First identity axiom. *)
   Lemma opposite_enriched_id_ax_holds : enriched_id_ax V opposite_enriched_precat_data.
   Proof.
     unfold enriched_id_ax.
-    intros a b. simpl. split.
+    intros b a. simpl in *. split.
+
+    (* First identity axiom. *)
     * symmetry.
-      Check (!(units_commute_with_braiding V (enriched_cat_mor V a b))).
-  Admitted.
+      refine (!(units_commute_with_braiding_l _ _) @ _).
+      refine (maponpaths (fun f => _ · f) (!(pr2 (pr1 (pr2 C) _ _))) @ _).
+      refine ((assoc _ _ _) @ _).
+      refine (maponpaths (fun f => f · _) (!(pr2 γ _ _ (enriched_cat_id V a #, id (Vhom a b)))) @ _).
+      refine (!(assoc _ _ _) @ _).
+      apply idpath.
+
+    * (* Second identity axiom. *)
+      symmetry.
+      refine ((!(units_commute_with_braiding_r _ _)) @ _).
+      refine (maponpaths (fun f => _ · f) (!(pr1 (pr1 (pr2 C) _ _))) @ _).
+      refine ((assoc _ _ _) @ _).
+      refine (maponpaths (fun f => f · _) (!(pr2 γ _ _ (id (Vhom a b) #, Vid b))) @ _).
+      refine (!(assoc _ _ _) @ _).
+      apply idpath.
+  Defined.
 
   Lemma opposite_enriched_assoc_ax_holds : enriched_assoc_ax V opposite_enriched_precat_data.
   Proof.
