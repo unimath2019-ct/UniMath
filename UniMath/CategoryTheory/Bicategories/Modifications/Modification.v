@@ -26,6 +26,24 @@ Definition modification
   : UU
   := prebicat_cells (psfunctor_bicat B B') σ τ.
 
+Definition modification_data
+           {B B' : bicat}
+           {F G : psfunctor B B'}
+           (σ τ : pstrans F G)
+  : UU
+  := ∏ (X : B), σ X ==> τ X.
+
+Definition is_modification
+           {B B' : bicat}
+           {F G : psfunctor B B'}
+           {σ τ : pstrans F G}
+           (m : modification_data σ τ)
+  : UU
+  := ∏ (X Y : B) (f : X --> Y),
+       psnaturality_of σ f • (m Y ▻ #F f)
+       =
+       #G f ◅ m X • psnaturality_of τ f.
+
 Definition modcomponent_of
            {B B' : bicat}
            {F G : psfunctor B B'}
@@ -41,21 +59,15 @@ Definition modnaturality_of
            {F G : psfunctor B B'}
            {σ τ : pstrans F G}
            (m : modification σ τ)
-  : ∏ (X Y : B) (f : X --> Y),
-    psnaturality_of σ f • (m Y ▻ #F f)
-    =
-    #G f ◅ m X • psnaturality_of τ f
+  : is_modification m
   := pr211 m.
 
 Definition mk_modification
            {B B' : bicat}
            {F G : psfunctor B B'}
            {σ τ : pstrans F G}
-           (m : ∏ (X : B), σ X ==> τ X)
-           (Hm : ∏ (X Y : B) (f : X --> Y),
-                 psnaturality_of σ f • (m Y ▻ #F f)
-                 =
-                 #G f ◅ m X • psnaturality_of τ f)
+           (m : modification_data σ τ)
+           (Hm : is_modification m)
   : modification σ τ
   := (((m ,, Hm) ,, (tt ,, tt ,, tt)),, tt).
 
@@ -130,6 +142,24 @@ Proof.
   apply idpath.
 Qed.
 
+Definition invertible_modification_data
+           {B B' : bicat}
+           {F G : psfunctor B B'}
+           (σ τ : pstrans F G)
+  : UU
+  := ∏ (X : B), invertible_2cell (σ X) (τ X).
+
+Coercion invertible_modification_data_to_modification_data
+           {B B' : bicat}
+           {F G : psfunctor B B'}
+           {σ τ : pstrans F G}
+           (m : invertible_modification_data σ τ)
+  : modification_data σ τ.
+Proof.
+  intro X.
+  exact (m X).
+Defined.
+
 Definition is_invertible_modcomponent_of
            {B B' : bicat}
            {F G : psfunctor B B'}
@@ -156,7 +186,7 @@ Proof.
   use mk_is_invertible_2cell.
   - use mk_modification.
     + exact (λ X, (Hm X)^-1).
-    + intros.
+    + intros X Y f.
       simpl.
       use vcomp_move_R_Mp.
       { is_iso. }
@@ -195,16 +225,14 @@ Definition mk_invertible_modification
            {B B' : bicat}
            {F G : psfunctor B B'}
            {σ τ : pstrans F G}
-           (m : ∏ (X : B), invertible_2cell (σ X) (τ X))
-           (Hm : ∏ (X Y : B) (f : X --> Y),
-                 psnaturality_of σ f • (m Y ▻ #F f)
-                 =
-                 #G f ◅ m X • psnaturality_of τ f)
+           (m : invertible_modification_data σ τ)
+           (Hm : is_modification m)
   : invertible_modification σ τ.
 Proof.
   use mk_invertible_2cell.
   - use mk_modification.
-    + apply m.
+    + unfold modification_data.
+      apply m.
     + exact Hm.
   - apply mk_is_invertible_modification.
     intro.

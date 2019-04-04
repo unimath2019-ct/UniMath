@@ -567,4 +567,11 @@ Proof.
     apply idpath.
 Defined.
 
+
+(* The swap functor C × D → D × C. *)
+Definition swap_functor {C D : precategory} :
+  functor (precategory_binproduct C D) (precategory_binproduct D C) :=
+  pair_functor (pr2_functor C D) (pr1_functor C D) □ bindelta_functor (precategory_binproduct C D).
+
+
 End functors.
