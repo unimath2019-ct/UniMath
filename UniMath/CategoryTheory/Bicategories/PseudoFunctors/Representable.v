@@ -25,6 +25,7 @@ Require Import UniMath.CategoryTheory.Core.Univalence.
 Require Import UniMath.CategoryTheory.Bicategories.Bicategories.Univalence.
 Require Import UniMath.CategoryTheory.Bicategories.PseudoFunctors.Presheaves.
 Require Import UniMath.CategoryTheory.Bicategories.Transformations.PseudoTransformation.
+Require Import UniMath.CategoryTheory.Bicategories.Modifications.Modification.
 
 Local Open Scope bicategory_scope.
 Local Open Scope cat.
@@ -107,3 +108,44 @@ Proof.
 Defined.
 
 End Representable1.
+
+Section Representable2.
+
+Context {C : bicat}{X Y : C}{f g : X --> Y}.
+Variable (C_is_univalent_2_1 : is_univalent_2_1 C) (η : f ==> g).
+
+Definition representable2_data
+  : modification_data (representable1 C_is_univalent_2_1 f)
+                      (representable1 C_is_univalent_2_1 g).
+Proof.
+  intro Z.
+  use mk_nat_trans.
+  - intro h.
+    simpl.
+    exact (h ◃ η).
+  - intros h k φ.
+    simpl.
+    apply vcomp_whisker.
+Defined.
+
+Definition representable2_is_modification
+  : is_modification (σ := representable1 C_is_univalent_2_1 f) representable2_data.
+Proof.
+  intros Z W h.
+  use nat_trans_eq.
+  { exact (pr2 C W Y). }
+  intro k.
+  cbn in *.
+  symmetry.
+  apply lwhisker_lwhisker.
+Qed.
+
+Definition representable2 :
+  modification (representable1 C_is_univalent_2_1 f) (representable1 C_is_univalent_2_1 g).
+Proof.
+  use mk_modification.
+  - apply representable2_data.
+  - apply representable2_is_modification.
+Defined.
+
+End Representable2.
