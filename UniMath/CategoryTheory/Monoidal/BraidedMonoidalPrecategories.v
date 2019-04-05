@@ -89,32 +89,6 @@ Section CoherenceLemmas.
   Notation "X ⊗ Y" := (tensor (X, Y)).
   Notation "f #⊗ g" := (#tensor (f #, g)) (at level 31).
 
-  (* On MacLane's conditions for coherence of natural associativities, commutativities, etc.
-      - GM Kelly.  *)
-  Lemma left_unitor_tensored_is_left_unitor_of_tensor :
-    ∏ (a : Mp) , (id i #⊗ l a) = l (i ⊗ a).
-  Proof.
-    intro a.
-    apply (Isos.post_comp_with_iso_is_inj _ _ _ _ (pr2 (monoidal_precat_left_unitor M) a) _ _ _).
-    exact (pr2 l _ _ _).
-  Defined.
-
-  Lemma right_unitor_tensord_is_right_unitor_of_tensor :
-    ∏ (a : Mp) , (ρ a #⊗ id i) = ρ (a ⊗ i).
-  Proof.
-    intro a.
-    apply (Isos.post_comp_with_iso_is_inj _ _ _ _ (pr2 (monoidal_precat_right_unitor M) a) _ _ _).
-    exact (pr2 ρ _ _ _).
-  Defined.
-
-  Lemma double_right_unitor :
-    ∏ (a : Mp) , α ((a , i) , i) · (id a #⊗ (ρ i)) = (ρ (a ⊗ i)).
-  Proof.
-    intro a.
-
-  Admitted.
-
-
   (* Lemmas about braiding. *)
   Lemma units_commute_with_braiding_l :
     ∏ (a : Mp) , γ (i , a) · ρ a = l a.
