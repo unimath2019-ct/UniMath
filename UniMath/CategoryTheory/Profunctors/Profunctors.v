@@ -44,12 +44,12 @@ Section Profunctors.
 
   (** * Definition *)
   (** A E-valued profunctor [C ↛ D] is a functor [D^op × C → E]. *)
-  Definition vprofunctor (C D : precategory) : UU :=
+  Definition profunctor (C D : precategory) : UU :=
     functor (precategory_binproduct (opp_precat D) C) E.
 
-  Identity Coercion vprofunctor_coercion : vprofunctor >-> functor.
+  Identity Coercion profunctor_coercion : profunctor >-> functor.
 
-  Infix "↛" := vprofunctor (at level 99, only parsing) : cat.
+  Infix "↛" := profunctor (at level 99, only parsing) : cat.
 
   Local Notation "A ⊗ B" := (precatbinprodpair A B).
 
@@ -306,18 +306,18 @@ Section CoendsAndEnds.
     functor (precategory_binproduct C D) (precategory_binproduct D C) :=
     pair_functor (pr2_functor C D) (pr1_functor C D) □ bindelta_functor (precategory_binproduct C D).
 
-  Definition profunctor_opp (F : vprofunctor E C C) : vprofunctor (E^op) C C.
+  Definition profunctor_opp (F : profunctor E C C) : profunctor (E^op) C C.
   Proof.
-    unfold vprofunctor in *.
+    unfold profunctor in *.
     exact (functor_opp (F □ swap_functor)).
   Defined.
 
   (* By definition, an end for F : C^op × C → V is a coend for
      F^op : C^op × C ≅ C × C^op → V^op and viceversa. *)
-  Proposition coend_is_opposite_end {F : vprofunctor E C C} (e : Coend E F) : End E^op (profunctor_opp F).
+  Proposition coend_is_opposite_end {F : profunctor E C C} (e : Coend E F) : End E^op (profunctor_opp F).
   Proof. exact e. Qed.
 
-  Proposition end_is_opposite_coend {F : vprofunctor E C C} (e : End E F) : Coend E^op (profunctor_opp F).
+  Proposition end_is_opposite_coend {F : profunctor E C C} (e : End E F) : Coend E^op (profunctor_opp F).
   Proof. exact e. Qed.
 
 End CoendsAndEnds.
