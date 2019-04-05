@@ -65,28 +65,28 @@ Section OppositeEnrichedPrecategory.
     intros b a. simpl in *. split.
 
     (* First identity axiom. *)
-    * symmetry.
-      refine (!(units_commute_with_braiding_l _ _) @ _).
-      refine (maponpaths (fun f => _ · f) (!(pr2 (pr1 (pr2 C) _ _))) @ _).
-      refine ((assoc _ _ _) @ _).
-      refine (maponpaths (fun f => f · _) (!(pr2 γ _ _ (enriched_cat_id V a #, id (Vhom a b)))) @ _).
-      refine (!(assoc _ _ _) @ _).
+    * apply pathsinv0.
+      etrans. { apply (!(units_commute_with_braiding_l _ _)). }
+      etrans. { apply (maponpaths (fun f => _ · f) (!(pr2 (pr1 (pr2 C) _ _)))). }
+      etrans. { apply (assoc _ _ _). }
+      etrans. { apply (maponpaths (fun f => f · _) (!(pr2 γ _ _ (enriched_cat_id V a #, id (Vhom a b))))). }
+      etrans. { apply (!(assoc _ _ _)). }
       apply idpath.
 
-    * (* Second identity axiom. *)
-      symmetry.
-      refine ((!(units_commute_with_braiding_r _ _)) @ _).
-      refine (maponpaths (fun f => _ · f) (!(pr1 (pr1 (pr2 C) _ _))) @ _).
-      refine ((assoc _ _ _) @ _).
-      refine (maponpaths (fun f => f · _) (!(pr2 γ _ _ (id (Vhom a b) #, Vid b))) @ _).
-      refine (!(assoc _ _ _) @ _).
+    (* Second identity axiom. *)
+    * apply pathsinv0.
+      etrans. { apply ((!(units_commute_with_braiding_r _ _))). }
+      etrans. { apply (maponpaths (fun f => _ · f) (!(pr1 (pr1 (pr2 C) _ _)))). }
+      etrans. { apply ((assoc _ _ _)). }
+      etrans. { apply (maponpaths (fun f => f · _) (!(pr2 γ _ _ (id (Vhom a b) #, Vid b)))). }
+      etrans. { apply (!(assoc _ _ _)). }
       apply idpath.
   Defined.
 
   Lemma opposite_enriched_assoc_ax_holds : enriched_assoc_ax V opposite_enriched_precat_data.
   Proof.
     unfold enriched_assoc_ax.
-    intros a b. simpl.
+    intros a b c d. simpl.
   Admitted.
 
   Definition opposite_enriched_precat : enriched_precat V.
