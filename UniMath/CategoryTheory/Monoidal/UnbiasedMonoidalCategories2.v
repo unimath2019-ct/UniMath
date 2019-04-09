@@ -119,4 +119,10 @@ Section tensor_constructions.
   Proof.
     use mk_functor.
     - use mk_functor_data.
-      + intro x. cbn in x.
+      + intros ll x.
+        exact ((pr11 (nfun (l x))) (ll x)).
+      + intros la lb lf x ; simpl.
+        exact ((pr21 (nfun (l x))) (la x) (lb x) (lf x)).
+    - apply dirprodpair ; cbv ; intros ; apply (pr1weq (weqfunextsec _ _ _)) ;
+        intro x ; apply (nfun (l x)).
+  Defined.
