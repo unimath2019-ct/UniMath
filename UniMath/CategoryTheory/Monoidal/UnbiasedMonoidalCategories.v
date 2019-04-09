@@ -58,7 +58,6 @@ Section listyoga.
 
 End listyoga.
 
-
 Local Open Scope cat.
 
 Local Notation "C × D" := (precategory_binproduct C D)
@@ -350,6 +349,18 @@ Section tensor_constructions.
     exact (pr2 (prod_of_listfun (to_listfun funfam ll))).
   Defined.
 
+  Definition somethingelse : ∏ (ll : list (list nat)),
+                             hh_dom ([] :: ll) = unit_category × hh_dom ll.
+  Proof.
+    use list_ind.
+    + cbn -[unit_category precategory_binproduct].
+
+
+  Definition something (nfun : (∏ (n : nat), list_precategory C n ⟶ C)) :
+    ∏ (ll : list (list nat)),
+    hh_prod_fun ([] :: ll) (h_prod_fun nfun)
+    = ((nfun 0) #× (hh_prod_fun ll (h_prod_fun nfun))).
+
   (** This is a specialisation of hh_prod_fun above to funfam := ⊗. *)
   Definition hh_ten {ll : list (list nat)} := hh_prod_fun ll h_ten.
 
@@ -388,6 +399,13 @@ Section tensor_constructions.
         replace (h_dom_flatten_functor (0 :: map length ls)) with
             (lunit_functor _ ∙ h_dom_flatten_functor (map length ls))
           by reflexivity.
+        Check (hh_prod_fun ([] :: ls) (h_prod_fun nfun)).
+        assert (q : hh_prod_fun ([] :: ls) (h_prod_fun nfun) =
+                    (functor_identity
+                       unit_category #× (hh_prod_fun ls (h_prod_fun nfun)))).
+        { admit. }
+        rewrite q.
+
         rewrite -> p.
 
 
