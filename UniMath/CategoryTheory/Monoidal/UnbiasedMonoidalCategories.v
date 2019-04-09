@@ -12,7 +12,6 @@ Require Import UniMath.Combinatorics.Lists.
 
 (** * Ye have been warned, everything is made from right-associated products. *)
 
-
 Local Open Scope list.
 
 Section listyoga.
@@ -31,6 +30,30 @@ Section listyoga.
       intro bad.
       apply poslen.
       exact (maponpaths pr1 bad).
+  Defined.
+
+  Definition equal_total_length {A : UU} :
+    ∏ (ll : list (list A)),
+    length (foldr concatenate [] ll) = sum_list (map length ll).
+  Proof.
+    use list_ind.
+    - reflexivity.
+    - intros l ls p ; simpl in p ; simpl.
+      replace (length (foldr concatenate [] (l :: ls)))
+        with (length (concatenate l (foldr concatenate [] ls)))
+        by reflexivity.
+      replace (sum_list (map length (l :: ls)))
+        with ((length l) + sum_list (map length ls)) by reflexivity.
+      revert l.
+      use list_ind.
+      + apply p.
+      + intros a l q ; simpl in q; cbn -[length sum_list map foldr].
+        replace (length (concatenate (a :: l) (foldr concatenate [] ls)))
+          with (S (length (concatenate l (foldr concatenate [] ls))))
+          by reflexivity.
+        replace (length (a :: l)) with (S (length l)) by reflexivity.
+        rewrite q.
+        auto with natarith.
   Defined.
 
 End listyoga.
@@ -128,9 +151,7 @@ Section UnivalentListCategory.
 
 End UnivalentListCategory.
 
-Section ListReassociation.
-
-  (** ** TODO: Where does this go?  *)
+(** ** TODO: Where does this go?  *)
   (** This constructs, for [ l: list nat ], the functor
 
       C^l(0) x (C^l(1) ... ( C^l(last) )) --> C^(length l)
@@ -308,7 +329,7 @@ Section tensor_constructions.
           x (C^(ll(last,1)) x ... x C^(ll(last,last)))
 
                            |
-                           | (funfam x .. x funfam) x .. x (funfam x .. x funfam)
+                           | funfam x .. x funfam
                            |
                            v
 
@@ -332,86 +353,46 @@ Section tensor_constructions.
   (** This is a specialisation of hh_prod_fun above to funfam := ⊗. *)
   Definition hh_ten {ll : list (list nat)} := hh_prod_fun ll h_ten.
 
-  Check hh_dom_flatten_functor.
-
   (** We need to be able to commute flattening and tensoring in several ways. *)
 
-  Variable ll : list (list nat).
-  Variable nfun : ∏ (n : nat), list_precategory C n ⟶ C.
+  Definition bridging_functor (ll : list (list nat)) :
+    functor (list_precategory C (sum_list (map length ll)))
+            (list_precategory C (length (foldr concatenate [] ll))).
+  Proof.
+    rewrite equal_total_length.
+    apply functor_identity.
+  Defined.
 
-  Check (hh_dom_flatten_functor ll ∙ h_prod_fun nfun (foldr concatenate [] ll)).
-  Check (hh_prod_fun ll (h_prod_fun nfun) ∙ h_prod_fun _ _).
-  Check h_prod_fun.
-
-  Definition something : ∏ (ll : list (list nat)),
-    list_precategory C (length (map length ll)) ⟶
-    list_precategory C (length (foldr concatenate [] ll)).
+  Definition hh_dom_commute (nfun : ∏ (n : nat), list_precategory C n ⟶ C) :
+    ∏ (ll : list (list nat)),
+    hh_dom_flatten_functor ll ∙ h_prod_fun nfun (foldr concatenate [] ll) =
+    hh_prod_fun ll (h_prod_fun nfun) ∙ h_dom_flatten_functor _ ∙
+                bridging_functor _.
   Proof.
     use list_ind.
-    - apply functor_identity.
-    - intros l ll func ; simpl in func.
+    - cbn ; reflexivity.
+    - intros l ls p ; simpl in p.
       revert l.
-      use list_ind ;      cbn -[list_precategory length map foldr].
-      + replace (cons nil ll) with (ll).
-        * admit.
-        * revert
+      use list_ind.
+      + simpl.
+        replace (h_dom_flatten_functor (map length ([] :: ls))) with
+            (h_dom_flatten_functor (0 :: (map length ls))) by reflexivity.
+        replace (h_prod_fun nfun (foldr concatenate [] ([] :: ls))) with
+            (h_prod_fun nfun (foldr concatenate [] ls)) by reflexivity.
+        replace (hh_dom_flatten_functor ([] :: ls)) with
+            (lunit_functor _ ∙ hh_dom_flatten_functor ls) by reflexivity.
+        replace (bridging_functor ([] :: ls)) with (bridging_functor ls)
+          by reflexivity.
+        rewrite -> (functor_assoc _ _ _ _ (lunit_functor _)
+                                 (hh_dom_flatten_functor ls) _).
+        replace (h_dom_flatten_functor (0 :: map length ls)) with
+            (lunit_functor _ ∙ h_dom_flatten_functor (map length ls))
+          by reflexivity.
+        rewrite -> p.
 
 
 
 
-  Definition hh_dom_commute (nfun : ∏ (n : nat), list_precategory C n ⟶ C)
-             (ll : list (list nat)) :
-    hh_dom_flatten_functor ll ∙ h_prod_fun nfun (foldr concatenate [] ll) =
-    hh_prod_fun ll (h_prod_fun nfun) ∙ h_prod_fun (h_dom_flatten_functor) _.
-
-
-    (** In the notation of the above comments, given [ ll : list (list nat ) ]
-        this section constructs:
-
-        C^(k_(1,1)) x (... x ( C^(k_(1,j_1)) x ( C^(2,1) x ( ... C^(k_(n,j_n))...)
-
-        as well as the functor (below) with this as domain and codomain C.
-
-          x_n (x_(sum xk1i) )
-             (x_(sum xk2i) ) ...
-             (x_(sum xkni) )
-     *)
-
-    Definition double_list_to_domain3 (ll : list (list nat)) : precategory
-      := horizontal_domain C (map length ll).
-
-    Definition tensor2 {ll : list (list nat)} : double_list_to_domain3 ll ⟶ C
-      := h_ten _ ∙ ⊗ _.
-
-        (** In the established notation, given [ ll: list (list nat) ] this section
-        constructsn
-
-        C^(sum k_(1,i)) x ( ... x C^(sum k_(n,i)))
-
-        as well as the functor (below) with this as domain and codomain C.
-
-        x_(sum mi) (x_k11) ... (x_k1j1) ... (x_kn1) ... (x_knjn)
-
-     *)
-
-  Definition double_list_to_domain4 (ll : list (list nat)) : precategory
-    := horizontal_domain C (map sum_list ll).
-
-  Definition tensor3 {ll : list (list nat)} : double_list_to_domain4 ll ⟶ C
-    := h_ten _ ∙ ⊗ _ .
-
-    (** Given [ ll: list (list nat) ] this section constructs the ⊗ functor
-
-
-                            x_(sum sum (k_ij))
-        C^(sum sum k_(i,j)) -------------------> C
-     *)
-
-  Definition double_list_to_domain5 (ll : list (list nat)) : precategory
-    := list_precategory C (sum_list (map sum_list ll)).
-
-  Definition tensor4 {ll : list (list nat)} : double_list_to_domain5 ll ⟶ C
-    := ⊗ _.
 
 
 End tensor_constructions.
@@ -446,7 +427,7 @@ Section unbiased_monoidal_precategory.
          ⊗_n (⊗_m1 (⊗_k11) ... (⊗_k1j1) )
              (⊗_m2 (⊗_k21 ) ...(⊗_k2j2) ) ...
              (⊗_mn (⊗_kn1) ... (⊗_knjn) )
-  *)
+       *)
 
 
 
@@ -454,40 +435,4 @@ Section unbiased_monoidal_precategory.
     := hh_ten ∙ h_ten _ ∙ ⊗ _.
 
 
-    (** In this section we construct the pasting
-
-        This is wrong. We need to be able to commute flatten with products of functors.
-
-
-             domain1 ======== domain1
-                 |              |
-    pre_tensor1  |              |  tensor1
-                 v   h_ten ∙ ⊗  v
-             domain2 ---------> A
-                 |             ||
-        flatten  |  gammator   ||
-                 v             ||
-             domain2 -tensor2-> A
-                 |             ||
-        flatten  |  gammator   ||
-                 v             ||
-             domain3 ---------> A
-                      tensor3
-     *)
-
-    Variable (ll : list (list nat)).
-
-    Definition first_whisker1 : gammator (map length ll) ->
-      tensor1 ⟹ pre_tensor1 ∙ h_dom_flatten_functor _ (map length ll) ∙ ⊗ _
-      := pre_whisker pre_tensor1.
-
-    Check @pre_tensor1 ll.
-    Check pre_tensor1 ∙ flatten_functor _ _.
-
-    Definition second_whisker1 : gammator (map length ll) ->
-                                 pre_tensor1 ∙ flatten_functor _ (map length ll) ∙ tensor2 ⟹ pre_tensor1 ∙
-                                             flatten_functor _ _ ∙
-                                             flatten_functor _ _ ∙ tensor3.
-  End first_pasting.
-End ListReassociation.
-End
+End unbiased_monoidal_precategory.
