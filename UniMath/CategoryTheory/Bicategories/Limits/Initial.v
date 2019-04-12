@@ -1,5 +1,3 @@
-
-
 Require Import UniMath.Foundations.All.
 Require Import UniMath.MoreFoundations.All.
 Require Import UniMath.CategoryTheory.Core.Categories.
@@ -15,6 +13,8 @@ Require Import UniMath.CategoryTheory.Bicategories.Bicategories.Examples.BicatOf
 Require Import UniMath.CategoryTheory.Bicategories.Bicategories.Adjunctions.
 Require Import UniMath.CategoryTheory.Bicategories.Bicategories.AdjointUnique.
 Require Import UniMath.CategoryTheory.Bicategories.Bicategories.EquivToAdjequiv.
+Require Import UniMath.CategoryTheory.Bicategories.Bicategories.Examples.OneTypes.
+Require Import UniMath.CategoryTheory.Bicategories.Bicategories.Examples.BicatOfCats.
 Require Import UniMath.CategoryTheory.categories.StandardCategories.
 Require Import UniMath.CategoryTheory.Bicategories.Bicategories.Univalence.
 Require Import UniMath.CategoryTheory.Core.Univalence.
@@ -353,14 +353,123 @@ Section Initial.
         apply path_univalent_groupoid.
   Defined.
 
+  Definition isaprop_biinitial_2cell_property
+             {X Y : C}
+             (H : biinitial_eq_property X Y)
+    : isaprop (biinitial_2cell_property X Y).
+  Proof.
+    apply impred ; intro f.
+    apply impred ; intro g.
+    apply isaproptotal2.
+    - intro.
+      apply isaprop_is_invertible_2cell.
+    - intros α β Hα Hβ.
+      apply H.
+  Qed.
+
+  Definition isaprop_biinitial_eq_property
+             (X Y : C)
+    : isaprop (biinitial_eq_property X Y).
+  Proof.
+    repeat (apply impred ; intro).
+    apply C.
+  Qed.
+
   Definition isaprop_is_biinitial'
              (X : C)
     : isaprop (is_biinitial' X).
   Proof.
     apply invproofirrelevance.
     intros x y.
-    induction x as [f x].
-    induction y as [g y].
-    apply pathsdirprod.
-    -
+    induction x as [f Hf].
+    induction y as [g Hg].
+    use subtypeEquality.
+    - intro ; simpl.
+      apply impred ; intro Y.
+      apply isapropdirprod.
+      + apply isaprop_biinitial_2cell_property.
+        apply Hf.
+      + apply isaprop_biinitial_eq_property.
+    - simpl.
+    apply funextsec ; intro Y.
+    apply (isotoid_2_1 C_is_univalent_2_1).
+    apply Hf.
+  Qed.
 End Initial.
+
+Definition mk_is_biinitial
+           {C : bicat}
+           (C_is_univalent_2_1 : is_univalent_2_1 C)
+           (X : C)
+           (HX₁ : biinitial_1cell_property X)
+           (HX₂ : ∏ (Y : C), biinitial_2cell_property X Y)
+           (HX₃ : ∏ (Y : C), biinitial_eq_property X Y)
+  : is_biinitial C_is_univalent_2_1 X.
+Proof.
+  apply is_biinitial'_to_is_biinitial.
+  exact (HX₁ ,, λ Y, (HX₂ Y ,, HX₃ Y)).
+Defined.
+
+Definition empty_hlevel
+           (n : nat)
+  : isofhlevel (n + 1) ∅.
+Proof.
+  induction n.
+  - exact isapropempty.
+  - intro x.
+    exact (fromempty x).
+Defined.
+
+Definition empty_1_type
+  : one_types
+  := (∅ ,, empty_hlevel 2).
+
+Definition biinitial_1_types
+  : is_biinitial one_types_is_univalent_2_1 empty_1_type.
+Proof.
+  use mk_is_biinitial.
+  - intros X.
+    exact fromempty.
+  - intros Y f g.
+    use mk_invertible_2cell.
+    + intros z.
+      exact (fromempty z).
+    + apply one_type_2cell_iso.
+  - intros Y f g α β.
+    cbn in *.
+    apply funextsec ; intro z.
+    exact (fromempty z).
+Defined.
+
+Definition biinitial_cats
+  : is_biinitial univalent_cat_is_univalent_2_1 empty_category.
+Proof.
+  use mk_is_biinitial.
+  - intros C.
+    use mk_functor.
+    + use mk_functor_data.
+      * exact fromempty.
+      * exact (λ z, fromempty z).
+    + split.
+      * exact (λ z, fromempty z).
+      * exact (λ z, fromempty z).
+  - intros Y f g.
+    use mk_invertible_2cell.
+    + use mk_nat_trans.
+      * exact (λ z, fromempty z).
+      * exact (λ z, fromempty z).
+    + use mk_is_invertible_2cell.
+      * use mk_nat_trans.
+        ** exact (λ z, fromempty z).
+        ** exact (λ z, fromempty z).
+      * use nat_trans_eq.
+        { apply homset_property. }
+        exact (λ z, fromempty z).
+      * use nat_trans_eq.
+        { apply homset_property. }
+        exact (λ z, fromempty z).
+  - intros Y f g α β.
+    use nat_trans_eq.
+    { apply homset_property. }
+    exact (λ z, fromempty z).
+Defined.
