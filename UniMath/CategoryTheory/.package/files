@@ -235,6 +235,8 @@ Bicategories/DisplayedBicats/Examples/ContravariantFunctor.v
 Bicategories/DisplayedBicats/Examples/Cofunctormap.v
 Bicategories/DisplayedBicats/Examples/CwF.v
 
+Bicategories/Limits/Initial.v
+
 Bicategories/WkCatEnrichment/prebicategory.v
 Bicategories/WkCatEnrichment/Notations.v
 Bicategories/WkCatEnrichment/whiskering.v

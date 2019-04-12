@@ -24,64 +24,6 @@ Require Import UniMath.CategoryTheory.catiso.
 Local Open Scope bicategory_scope.
 Local Open Scope cat.
 
-
-Definition univ_hom
-           {C : bicat}
-           (C_is_univalent_2_1 : is_univalent_2_1 C)
-           (X Y : C)
-  : univalent_category.
-Proof.
-  use mk_category.
-  - exact (hom X Y).
-  - split.
-    + apply idtoiso_weq.
-      exact C_is_univalent_2_1.
-    + exact (pr2 C X Y).
-Defined.
-
-Definition inv_of_invertible_2cell
-           {C : bicat}
-           {X Y : C}
-           {f g : X --> Y}
-  : invertible_2cell f g → invertible_2cell g f.
-Proof.
-  intro α.
-  use mk_invertible_2cell.
-  - exact (α^-1).
-  - is_iso.
-Defined.
-
-Definition comp_of_invertible_2cell
-           {C : bicat}
-           {X Y : C}
-           {f g h : X --> Y}
-  : invertible_2cell f g → invertible_2cell g h → invertible_2cell f h.
-Proof.
-  intros α β.
-  use mk_invertible_2cell.
-  - exact (α • β).
-  - is_iso.
-    + apply α.
-    + apply β.
-Defined.
-
-Definition inv_adjoint_equivalence
-           {C : bicat}
-           {X Y : C}
-  : adjoint_equivalence X Y → adjoint_equivalence Y X.
-Proof.
-  intro f.
-  use equiv_to_adjequiv.
-  - exact (left_adjoint_right_adjoint f).
-  - simpl.
-    use tpair.
-    + repeat (use tpair).
-      * exact f.
-      * exact ((left_equivalence_counit_iso f)^-1).
-      * exact ((left_equivalence_unit_iso f)^-1).
-    + split ; cbn ; is_iso.
-Defined.
-
 Definition isweq_isinj
            {A B : UU}
            {f : A → B}
@@ -95,7 +37,6 @@ Proof.
 Defined.
 
 Section Initial.
-
   Context {C : bicat}.
   Variable (C_is_univalent_2_1 : is_univalent_2_1 C).
 
