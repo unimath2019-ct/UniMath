@@ -1,5 +1,5 @@
 (* ******************************************************************************* *)
-(** * Initial object in a bicategory
+(** * Biinitial object in a bicategory
     Niccolò Veltri, Niels van der Weide
     April 2019
  ********************************************************************************* *)
