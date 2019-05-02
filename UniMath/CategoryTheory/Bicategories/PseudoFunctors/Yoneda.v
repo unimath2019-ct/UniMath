@@ -1,5 +1,8 @@
-
-(** * Yoneda. *)
+(* ******************************************************************************* *)
+(** * Yoneda embedding
+    Niccolò Veltri, Niels van der Weide
+    April 2019
+ ********************************************************************************* *)
 
 Require Import UniMath.Foundations.All.
 Require Import UniMath.MoreFoundations.All.
@@ -24,7 +27,6 @@ Require Import UniMath.CategoryTheory.Bicategories.PseudoFunctors.Display.Pseudo
 Require Import UniMath.CategoryTheory.Core.Univalence.
 Require Import UniMath.CategoryTheory.Bicategories.Bicategories.Univalence.
 Require Import UniMath.CategoryTheory.Bicategories.Bicategories.Unitors.
-Require Import UniMath.CategoryTheory.Bicategories.PseudoFunctors.Presheaves.
 Require Import UniMath.CategoryTheory.Bicategories.PseudoFunctors.Representable.
 Require Import UniMath.CategoryTheory.Bicategories.Transformations.PseudoTransformation.
 Require Import UniMath.CategoryTheory.Bicategories.Modifications.Modification.
